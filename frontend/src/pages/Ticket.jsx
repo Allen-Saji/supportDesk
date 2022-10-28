@@ -4,11 +4,11 @@ import Modal from 'react-modal'
 import { FaPlus } from 'react-icons/fa'
 import { useSelector, useDispatch } from 'react-redux'
 import { getTicket, closeTicket } from '../features/tickets/ticketSlice'
-// import { getNotes, createNote } from '../features/notes/noteSlice'
+import { getNotes, createNote } from '../features/notes/noteSlice'
 import { useParams, useNavigate } from 'react-router-dom'
 import BackButton from '../components/BackButton'
 import Spinner from '../components/Spinner'
-// import NoteItem from '../components/NoteItem'
+import NoteItem from '../components/NoteItem'
 
 const customStyles = {
   content: {
@@ -27,10 +27,10 @@ Modal.setAppElement('#root')
 
 function Ticket() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
-//   const [noteText, setNoteText] = useState('')
+  const [noteText, setNoteText] = useState('')
   const { ticket } = useSelector((state) => state.tickets)
 
-//   const { notes } = useSelector((state) => state.notes)
+  const { notes } = useSelector((state) => state.notes)
 
   // NOTE: no need for two useParams
   // const params = useParams()
@@ -40,7 +40,7 @@ function Ticket() {
 
   useEffect(() => {
     dispatch(getTicket(ticketId)).unwrap().catch(toast.error)
-    //dispatch(getNotes(ticketId)).unwrap().catch(toast.error)
+    dispatch(getNotes(ticketId)).unwrap().catch(toast.error)
   }, [ticketId, dispatch])
 
   // Close ticket
@@ -57,18 +57,18 @@ function Ticket() {
   }
 
   // Create note submit
-//   const onNoteSubmit = (e) => {
-//     // NOTE: we can unwrap our AsyncThunkACtion here so no need for isError and
-//     // isSuccess state
-//     e.preventDefault()
-//     dispatch(createNote({ noteText, ticketId }))
-//       .unwrap()
-//       .then(() => {
-//         setNoteText('')
-//         closeModal()
-//       })
-//       .catch(toast.error)
-//   }
+  const onNoteSubmit = (e) => {
+    // NOTE: we can unwrap our AsyncThunkACtion here so no need for isError and
+    // isSuccess state
+    e.preventDefault()
+    dispatch(createNote({ noteText, ticketId }))
+      .unwrap()
+      .then(() => {
+        setNoteText('')
+        closeModal()
+      })
+      .catch(toast.error)
+  }
 
   // Open/close modal
   const openModal = () => setModalIsOpen(true)
@@ -112,7 +112,7 @@ function Ticket() {
         style={customStyles}
         contentLabel='Add Note'
       >
-        {/* <h2>Add Note</h2>
+        <h2>Add Note</h2>
         <button className='btn-close' onClick={closeModal}>
           X
         </button>
@@ -132,14 +132,14 @@ function Ticket() {
               Submit
             </button>
           </div>
-        </form> */}
+        </form>
       </Modal>
 
-      {/* {notes ? (
+      {notes ? (
         notes.map((note) => <NoteItem key={note._id} note={note} />)
       ) : (
         <Spinner />
-      )} */}
+      )}
 
       {ticket.status !== 'closed' && (
         <button onClick={onTicketClose} className='btn btn-block btn-danger'>
